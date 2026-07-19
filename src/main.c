@@ -56,8 +56,8 @@ static void print_gpio2_registers(const char *reason)
 #define LED2_NODE DT_ALIAS(led2)
 #define LED3_NODE DT_ALIAS(led3)
 #define LED4_NODE DT_ALIAS(led4)
-#define LED4_NODE DT_ALIAS(led5)
-#define LED4_NODE DT_ALIAS(led6)
+#define LED5_NODE DT_ALIAS(led5)
+#define LED6_NODE DT_ALIAS(led6)
 
 /*
  * A build error on this line means your board is unsupported.
