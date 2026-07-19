@@ -56,6 +56,8 @@ static void print_gpio2_registers(const char *reason)
 #define LED2_NODE DT_ALIAS(led2)
 #define LED3_NODE DT_ALIAS(led3)
 #define LED4_NODE DT_ALIAS(led4)
+#define LED4_NODE DT_ALIAS(led5)
+#define LED4_NODE DT_ALIAS(led6)
 
 /*
  * A build error on this line means your board is unsupported.
@@ -67,6 +69,8 @@ static const struct gpio_dt_spec leds[] = {
 	GPIO_DT_SPEC_GET(LED2_NODE, gpios),
 	GPIO_DT_SPEC_GET(LED3_NODE, gpios),
 	GPIO_DT_SPEC_GET(LED4_NODE, gpios),
+	GPIO_DT_SPEC_GET(LED5_NODE, gpios),
+	GPIO_DT_SPEC_GET(LED6_NODE, gpios),
 };
 
 int main(void)

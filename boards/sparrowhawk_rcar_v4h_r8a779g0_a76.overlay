@@ -14,6 +14,8 @@
 		led2 = &led2;
 		led3 = &led3;
 		led4 = &led4;
+		led5 = &led5;
+		led6 = &led6;
 	};
 
 	leds {
@@ -42,6 +44,16 @@
 		led4: led4 {
 			gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
 			label = "GPIO2_13";
+		};
+
+		led5: led5 {
+			gpios = <&gpio2 18 GPIO_ACTIVE_HIGH>;
+			label = "GPIO2_18";
+		};
+
+		led6: led6 {
+			gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+			label = "GPIO2_19";
 		};
 	};
 
