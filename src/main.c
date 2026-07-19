@@ -5,11 +5,50 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/device_mmio.h>
+#include <zephyr/sys/sys_io.h>
 
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS   1000
+
+#define GPIO2_NODE DT_NODELABEL(gpio2)
+#define GPIO2_PHYS_BASE DT_REG_ADDR(GPIO2_NODE)
+#define GPIO2_INOUTSEL_OFFSET 0x04
+#define GPIO2_OUTDT_OFFSET    0x08
+#define GPIO2_INDT_OFFSET     0x0c
+#define GPIO2_OUTDTSEL_OFFSET 0x40
+#define GPIO2_PIN_COUNT       20
+
+static mm_reg_t gpio2_base;
+
+static void map_gpio2_registers(void)
+{
+	device_map(&gpio2_base, GPIO2_PHYS_BASE, DT_REG_SIZE(GPIO2_NODE),
+		   K_MEM_CACHE_NONE);
+}
+
+static void print_gpio2_registers(const char *reason)
+{
+	uint32_t inoutsel = sys_read32(gpio2_base + GPIO2_INOUTSEL_OFFSET);
+	uint32_t outdt = sys_read32(gpio2_base + GPIO2_OUTDT_OFFSET);
+	uint32_t indt = sys_read32(gpio2_base + GPIO2_INDT_OFFSET);
+	uint32_t outdtsel = sys_read32(gpio2_base + GPIO2_OUTDTSEL_OFFSET);
+
+	printf("GPIO2 %s: INOUTSEL=0x%08x OUTDT=0x%08x "
+	       "INDT=0x%08x OUTDTSEL=0x%08x\n",
+	       reason, inoutsel, outdt, indt, outdtsel);
+
+	for (unsigned int pin = 0; pin < GPIO2_PIN_COUNT; pin++) {
+		printf("GPIO2_%02u: dir=%u out=%u in=%u\n", pin,
+		       (inoutsel >> pin) & 1U,
+		       (outdt >> pin) & 1U,
+		       (indt >> pin) & 1U);
+	}
+}
 
 /* The devicetree node identifiers for the GPIO2 LED aliases. */
 #define LED0_NODE DT_ALIAS(led0)
@@ -45,6 +84,8 @@ int main(void)
 			return 0;
 		}
 	}
+	map_gpio2_registers();
+	print_gpio2_registers("configured");
 
 	while (1) {
 		for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
@@ -56,6 +97,7 @@ int main(void)
 
 		led_state = !led_state;
 		printf("LED state: %s\n", led_state ? "ON" : "OFF");
+		print_gpio2_registers("toggled");
 		k_msleep(SLEEP_TIME_MS);
 	}
 	return 0;
